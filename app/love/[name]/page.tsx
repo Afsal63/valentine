@@ -4,41 +4,47 @@ import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+const GIF_URL =
+  "https://media.giphy.com/media/26FLdmIp6wJr91JAI/giphy.gif";
+
 export default function LovePage() {
   const params = useParams();
   const name = decodeURIComponent((params?.name as string) || "Love");
 
   const [yesClicked, setYesClicked] = useState(false);
-  const [noPos, setNoPos] = useState({ x: 140, y: 0 }); // ✅ safe initial position
+  const [noPos, setNoPos] = useState({ x: 140, y: 0 });
   const [noText, setNoText] = useState("NO 💔");
+  const [gifLoaded, setGifLoaded] = useState(false);
 
-  // Hydration-safe hearts
+  // hearts (hydration-safe)
   const [hearts, setHearts] = useState<number[]>([]);
-
   useEffect(() => {
     setHearts(Array.from({ length: 8 }, (_, i) => i));
   }, []);
 
+  // ✅ PRELOAD GIF ON PAGE LOAD
+  useEffect(() => {
+    const img = new Image();
+    img.src = GIF_URL;
+    img.onload = () => setGifLoaded(true);
+  }, []);
+
   const generateSafePosition = () => {
     const SAFE_RADIUS = 120;
-
     let x = Math.random() * 260 - 130;
     let y = Math.random() * 160 - 80;
 
     const distance = Math.sqrt(x * x + y * y);
-
     if (distance < SAFE_RADIUS) {
       const angle = Math.atan2(y, x);
       x = Math.cos(angle) * SAFE_RADIUS;
       y = Math.sin(angle) * SAFE_RADIUS;
     }
-
     return { x, y };
   };
 
   const moveNo = () => {
     setNoPos(generateSafePosition());
-
     const texts = [
       "NO 😜",
       "Nice try 😂",
@@ -69,7 +75,7 @@ export default function LovePage() {
 
       {/* Card */}
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
+        initial={{ scale: 0.85, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         className="relative z-10 w-full max-w-md rounded-3xl p-8 text-center
         bg-white/15 backdrop-blur-2xl shadow-[0_0_50px_rgba(255,0,120,0.45)] text-white"
@@ -88,9 +94,8 @@ export default function LovePage() {
               Will you be my Valentine? 💘
             </p>
 
-            {/* Buttons */}
             <div className="relative h-32 flex items-center justify-center">
-              {/* YES (centered, fixed) */}
+              {/* YES */}
               <motion.button
                 whileHover={{ scale: 1.15 }}
                 whileTap={{ scale: 0.9 }}
@@ -101,7 +106,7 @@ export default function LovePage() {
                 YES 💖
               </motion.button>
 
-              {/* NO (starts away, never overlaps) */}
+              {/* NO */}
               <motion.button
                 animate={{ x: noPos.x, y: noPos.y }}
                 transition={{ type: "spring", stiffness: 300 }}
@@ -113,23 +118,43 @@ export default function LovePage() {
             </div>
           </>
         ) : (
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-            <h1 className="text-4xl font-extrabold mb-4">
+          /* 🎉 YES SCREEN */
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 120 }}
+          >
+            <h1 className="text-4xl font-extrabold mb-3">
               I KNEW IT 😍💖
             </h1>
 
             <p className="text-lg mb-4 text-pink-100">
-              {name}, you just made my heart so happy ❤️
+              {name}, you just made my heart very happy ❤️
             </p>
 
-            <p className="text-pink-200 mb-6">
+            {/* GIF (instant, already preloaded) */}
+            {gifLoaded && (
+              <motion.img
+                src={GIF_URL}
+                alt="cute love gif"
+                className="rounded-2xl mx-auto mb-4 w-full max-w-xs shadow-lg"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              />
+            )}
+
+            {!gifLoaded && (
+              <div className="w-full max-w-xs mx-auto mb-4 h-48 rounded-2xl bg-white/20 animate-pulse" />
+            )}
+
+            <p className="text-pink-200 mb-4">
               This Valentine is officially ours 😘
             </p>
 
             <motion.div
-              className="text-7xl"
+              className="text-6xl"
               animate={{ scale: [1, 1.3, 1] }}
-              transition={{ repeat: Infinity, duration: 1.4 }}
+              transition={{ repeat: Infinity, duration: 1.3 }}
             >
               💞
             </motion.div>

@@ -1,40 +1,44 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-
-import { motion } from "framer-motion"
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function LoveHome() {
-  const [name, setName] = useState("")
-  const [link, setLink] = useState("")
-  const [copied, setCopied] = useState(false)
-  const router = useRouter()
+  const [name, setName] = useState("");
+  const [link, setLink] = useState("");
+  const [copied, setCopied] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (name) {
-      const origin = window.location.origin
-      setLink(`${origin}/love/${encodeURIComponent(name)}`)
+      const origin = window.location.origin;
+      setLink(`${origin}/love/${encodeURIComponent(name)}`);
     } else {
-      setLink("")
+      setLink("");
     }
-  }, [name])
+  }, [name]);
 
   const copyLink = async () => {
-    if (!link) return
-    await navigator.clipboard.writeText(link)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+    if (!link) return;
+    await navigator.clipboard.writeText(link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const openLink = () => {
-    if (!link) return
-    router.push(`/love/${encodeURIComponent(name)}`)
-  }
+    if (!link) return;
+    router.push(`/love/${encodeURIComponent(name)}`);
+  };
+
+  const whatsappMessage = encodeURIComponent(
+    `Hey 😌💖 I made something special for you...\n\nOpen this 👉 ${link}`,
+  );
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-pink-600 via-rose-500 to-purple-700">
-
+    <div className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-pink-600 via-rose-500 to-purple-700">
+      {/* Card */}
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -45,19 +49,19 @@ export default function LoveHome() {
         </h1>
 
         <p className="text-pink-100 mb-6">
-          Enter HIS / HER name and send her the link 😈
+          Enter HIS / HER name and send the link 😈
         </p>
 
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder=" name ❤️"
-          className="w-full px-5  py-3 rounded-full text-white outline-none mb-4"
+          placeholder="Name ❤️"
+          className="w-full px-5 py-3 rounded-full text-white outline-none mb-4 bg-black/20"
         />
 
         {/* Generated Link */}
         {link && (
-          <div className="bg-black/20 rounded-xl px-4 py-3 mb-4 break-all text-sm">
+          <div className="bg-black/30 rounded-xl px-4 py-3 mb-4 break-all text-sm">
             {link}
           </div>
         )}
@@ -87,6 +91,29 @@ export default function LoveHome() {
           </motion.button>
         </div>
       </motion.div>
+
+      {/* ✅ FLOATING WHATSAPP ICON (IMAGE) */}
+      {link && (
+        <motion.a
+          href={`https://wa.me/?text=${whatsappMessage}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          whileHover={{ scale: 1.15 }}
+          whileTap={{ scale: 0.9 }}
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full
+          bg-white flex items-center justify-center shadow-2xl"
+        >
+         <Image
+  src="/WhatsApp_icon.png"
+  alt="WhatsApp"
+  width={50}
+  height={50}
+  priority
+/>
+        </motion.a>
+      )}
     </div>
-  )
+  );
 }
