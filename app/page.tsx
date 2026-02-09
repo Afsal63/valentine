@@ -51,8 +51,8 @@ export default function LoveHome() {
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Her name ❤️"
-          className="w-full px-5 py-3 rounded-full text-black outline-none mb-4"
+          placeholder=" name ❤️"
+          className="w-full px-5  py-3 rounded-full text-white outline-none mb-4"
         />
 
         {/* Generated Link */}
