@@ -22,7 +22,7 @@ export default function LovePage() {
     setHearts(Array.from({ length: 8 }, (_, i) => i));
   }, []);
 
-  // ✅ PRELOAD GIF ON PAGE LOAD
+  // ✅ PRELOAD GIF ON PAGE LOAD d
   useEffect(() => {
     const img = new Image();
     img.src = GIF_URL;
