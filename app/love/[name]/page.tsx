@@ -16,13 +16,13 @@ export default function LovePage() {
   const [noText, setNoText] = useState("NO 💔");
   const [gifLoaded, setGifLoaded] = useState(false);
 
-  // hearts (hydration-safe)
+  // hearts
   const [hearts, setHearts] = useState<number[]>([]);
   useEffect(() => {
     setHearts(Array.from({ length: 8 }, (_, i) => i));
   }, []);
 
-  // ✅ PRELOAD GIF ON PAGE LOAD d
+  // preload gif
   useEffect(() => {
     const img = new Image();
     img.src = GIF_URL;
@@ -30,7 +30,8 @@ export default function LovePage() {
   }, []);
 
   const generateSafePosition = () => {
-    const SAFE_RADIUS = 120;
+    const SAFE_RADIUS = 130;
+
     let x = Math.random() * 260 - 130;
     let y = Math.random() * 160 - 80;
 
@@ -40,11 +41,13 @@ export default function LovePage() {
       x = Math.cos(angle) * SAFE_RADIUS;
       y = Math.sin(angle) * SAFE_RADIUS;
     }
+
     return { x, y };
   };
 
   const moveNo = () => {
     setNoPos(generateSafePosition());
+
     const texts = [
       "NO 😜",
       "Nice try 😂",
@@ -106,19 +109,25 @@ export default function LovePage() {
                 YES 💖
               </motion.button>
 
-              {/* NO */}
+              {/* NO (desktop + mobile safe loop) */}
               <motion.button
                 animate={{ x: noPos.x, y: noPos.y }}
                 transition={{ type: "spring", stiffness: 300 }}
                 onMouseEnter={moveNo}
-                className="absolute px-6 py-3 rounded-full font-bold bg-gray-700"
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  moveNo();
+                }}
+                onClick={moveNo}
+                className="absolute px-6 py-3 rounded-full font-bold bg-gray-700
+                touch-none select-none"
               >
                 {noText}
               </motion.button>
             </div>
           </>
         ) : (
-          /* 🎉 YES SCREEN */
+          /* YES SCREEN */
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -132,8 +141,7 @@ export default function LovePage() {
               {name}, you just made my heart very happy ❤️
             </p>
 
-            {/* GIF (instant, already preloaded) */}
-            {gifLoaded && (
+            {gifLoaded ? (
               <motion.img
                 src={GIF_URL}
                 alt="cute love gif"
@@ -141,9 +149,7 @@ export default function LovePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               />
-            )}
-
-            {!gifLoaded && (
+            ) : (
               <div className="w-full max-w-xs mx-auto mb-4 h-48 rounded-2xl bg-white/20 animate-pulse" />
             )}
 
